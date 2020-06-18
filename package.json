@@ -1,6 +1,6 @@
 {
   "name": "pngenerator",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "A file preview generator for node.js",
   "main": "filepreview.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxlabelle/filepreview.git"
+    "url": "git+https://github.com/parweb/pngenerator.git"
   },
   "keywords": [
     "video",
@@ -23,9 +23,9 @@
   "author": "Maxime Labelle <Maxime.Labelle@owasp.org> (https://github.com/maxlabelle/filepreview)",
   "license": "BSD-4-Clause",
   "bugs": {
-    "url": "https://github.com/maxlabelle/filepreview/issues"
+    "url": "https://github.com/parweb/pngenerator/issues"
   },
-  "homepage": "https://github.com/maxlabelle/filepreview#readme",
+  "homepage": "https://github.com/parweb/pngenerator#readme",
   "dependencies": {
     "async": "^2.6.0"
   }
