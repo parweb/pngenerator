@@ -68,6 +68,7 @@ module.exports = {
       hash = hash.digest('hex');
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
+      console.log(('curl', curlArgs));
       child_process.execFileSync('curl', curlArgs);
       input = temp_input;
     }
@@ -316,6 +317,7 @@ module.exports = {
       hash = hash.digest('hex');
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
+      console.log(('curl', curlArgs));
       child_process.execFileSync('curl', curlArgs);
       input = temp_input;
     }
