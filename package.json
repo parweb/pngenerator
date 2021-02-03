@@ -1,6 +1,6 @@
 {
   "name": "pngenerator",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A file preview generator for node.js",
   "main": "filepreview.js",
   "scripts": {
