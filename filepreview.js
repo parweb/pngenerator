@@ -6,6 +6,8 @@ var fs = require('fs');
 var os = require('os');
 var mimedb = require('./db.json');
 
+const format = input => input.split('.').reverse()[0];
+
 module.exports = {
   generate: (input_original, output, options, callback) => {
     var input = input_original;
@@ -27,6 +29,7 @@ module.exports = {
 
     var fileArgs = [input_original];
 
+    console.log('01', 'file', fileArgs);
     var fileExecOutput = child_process.execFileSync('file', fileArgs);
     var is_executable = fileExecOutput.toString().indexOf('executable');
     if (parseInt(is_executable) > 0) {
@@ -68,7 +71,7 @@ module.exports = {
       hash = hash.digest('hex');
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
-      console.log(('curl', curlArgs));
+      console.log('02', 'curl', curlArgs);
       child_process.execFileSync('curl', curlArgs);
       input = temp_input;
     }
@@ -102,6 +105,7 @@ module.exports = {
                   : '')
             );
           }
+          console.log('03', 'ffmpeg', ffmpegArgs);
           child_process.execFile('ffmpeg', ffmpegArgs, error => {
             if (
               input_original.indexOf('http://') == 0 ||
@@ -135,6 +139,7 @@ module.exports = {
             convertArgs.splice(0, 0, '-background', options.background);
             convertArgs.splice(0, 0, '-flatten');
           }
+          console.log('04', 'convert', convertArgs);
           child_process.execFile('convert', convertArgs, error => {
             if (
               input_original.indexOf('http://') == 0 ||
@@ -167,6 +172,13 @@ module.exports = {
           }
 
           if (unoconv_pagerange == '1') {
+            console.log('05', 'unoconv', [
+              '-e',
+              'PageRange=' + unoconv_pagerange,
+              '-o',
+              tempPDF,
+              input
+            ]);
             child_process.execFile(
               'unoconv',
               ['-e', 'PageRange=' + unoconv_pagerange, '-o', tempPDF, input],
@@ -184,6 +196,7 @@ module.exports = {
                 if (options.quality) {
                   convertOtherArgs.splice(0, 0, '-quality', options.quality);
                 }
+                console.log('06', 'convert', convertOtherArgs);
                 child_process.execFile('convert', convertOtherArgs, error => {
                   if (error) return callback(error);
                   fs.unlink(tempPDF, error => {
@@ -200,6 +213,13 @@ module.exports = {
               }
             );
           } else {
+            console.log('07', 'unoconv', [
+              '-e',
+              'PageRange=' + unoconv_pagerange,
+              '-o',
+              tempPDF,
+              input
+            ]);
             child_process.execFile(
               'unoconv',
               ['-e', 'PageRange=' + unoconv_pagerange, '-o', tempPDF, input],
@@ -212,9 +232,11 @@ module.exports = {
                 async.eachSeries(
                   pages,
                   (page, async_callback) => {
+                    const extension = format(output);
+
                     var convertOtherArgs = [
                       tempPDF + '[' + page + ']',
-                      page + '_' + output
+                      output.replace(`.${extension}`, `_${page}.${extension}`)
                     ];
                     if (options.width > 0 && options.height > 0) {
                       convertOtherArgs.splice(
@@ -232,11 +254,27 @@ module.exports = {
                         options.quality
                       );
                     }
+                    console.log('08', 'convert', convertOtherArgs);
                     child_process.execFile(
                       'convert',
                       convertOtherArgs,
                       error => {
-                        if (error) return callback(error);
+                        console.log({
+                          error: error?.message.includes(
+                            'Requested FirstPage is greater than the number of pages'
+                          )
+                        });
+                        if (error) {
+                          if (
+                            error?.message.includes(
+                              'Requested FirstPage is greater than the number of pages'
+                            )
+                          ) {
+                            return async_callback();
+                          }
+
+                          return callback(error);
+                        }
                         return async_callback();
                       }
                     );
@@ -250,7 +288,27 @@ module.exports = {
                         fs.unlink(input);
                       }
                       if (error) return callback(error);
-                      return callback();
+
+                      const extension = format(output);
+
+                      console.log('000', 'convert', [
+                        '-append',
+                        output.replace(`.${extension}`, `_*.${extension}`),
+                        output
+                      ]);
+
+                      child_process.execFile(
+                        'convert',
+                        [
+                          '-append',
+                          output.replace(`.${extension}`, `_*.${extension}`),
+                          output
+                        ],
+                        error => {
+                          if (error) return callback(error);
+                          return callback();
+                        }
+                      );
                     });
                   }
                 );
@@ -317,7 +375,7 @@ module.exports = {
       hash = hash.digest('hex');
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
-      console.log(('curl', curlArgs));
+      console.log('09', 'curl', curlArgs);
       child_process.execFileSync('curl', curlArgs);
       input = temp_input;
     }
