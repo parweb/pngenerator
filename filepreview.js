@@ -285,7 +285,7 @@ module.exports = {
                         input_original.indexOf('http://') == 0 ||
                         input_original.indexOf('https://') == 0
                       ) {
-                        fs.unlink(input);
+                        fs.unlinkSync(input);
                       }
                       if (error) return callback(error);
 
