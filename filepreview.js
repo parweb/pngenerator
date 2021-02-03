@@ -334,6 +334,7 @@ module.exports = {
     }
 
     var fileArgs = [input_original];
+    console.log('09', 'file', fileArgs);
     var fileExecOutput = child_process.execFileSync('file', fileArgs);
     var is_executable = fileExecOutput.toString().indexOf('executable');
     if (parseInt(is_executable) > 0) {
@@ -375,7 +376,7 @@ module.exports = {
       hash = hash.digest('hex');
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
-      console.log('09', 'curl', curlArgs);
+      console.log('10', 'curl', curlArgs);
       child_process.execFileSync('curl', curlArgs);
       input = temp_input;
     }
@@ -415,6 +416,7 @@ module.exports = {
                 : '')
           );
         }
+        console.log('11', 'ffmpeg', ffmpegArgs);
         child_process.execFileSync('ffmpeg', ffmpegArgs);
         if (
           input_original.indexOf('http://') == 0 ||
@@ -446,6 +448,7 @@ module.exports = {
           convertArgs.splice(0, 0, '-background', options.background);
           convertArgs.splice(0, 0, '-flatten');
         }
+        console.log('12', 'convert', convertArgs);
         child_process.execFileSync('convert', convertArgs);
         if (
           input_original.indexOf('http://') == 0 ||
@@ -479,6 +482,13 @@ module.exports = {
           }
         }
 
+        console.log('13', 'unoconv', [
+          '-e',
+          'PageRange=' + unoconv_pagerange,
+          '-o',
+          tempPDF,
+          input
+        ]);
         child_process.execFileSync('unoconv', [
           '-e',
           'PageRange=' + unoconv_pagerange,
@@ -500,6 +510,7 @@ module.exports = {
           if (options.quality) {
             convertOtherArgs.splice(0, 0, '-quality', options.quality);
           }
+          console.log('14', 'convert', convertOtherArgs);
           child_process.execFileSync('convert', convertOtherArgs);
         } else {
           for (var x = 0; x < pagerange_stop; x++) {
@@ -515,6 +526,7 @@ module.exports = {
             if (options.quality) {
               convertOtherArgs.splice(0, 0, '-quality', options.quality);
             }
+            console.log('15', 'convert', convertOtherArgs);
             child_process.execFileSync('convert', convertOtherArgs);
           }
         }
