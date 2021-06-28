@@ -30,7 +30,7 @@ module.exports = {
     var fileArgs = [input_original];
 
     console.log('01', 'file', fileArgs);
-    var fileExecOutput = child_process.execFileSync('file', fileArgs);
+    var fileExecOutput = child_process.execSync('file', fileArgs);
     var is_executable = fileExecOutput.toString().indexOf('executable');
     if (parseInt(is_executable) > 0) {
       return callback(true);
@@ -72,7 +72,7 @@ module.exports = {
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
       console.log('02', 'curl', curlArgs);
-      child_process.execFileSync('curl', curlArgs);
+      child_process.execSync('curl', curlArgs);
       input = temp_input;
     }
 
@@ -106,7 +106,7 @@ module.exports = {
             );
           }
           console.log('03', 'ffmpeg', ffmpegArgs);
-          child_process.execFile('ffmpeg', ffmpegArgs, error => {
+          child_process.exec('ffmpeg', ffmpegArgs, error => {
             if (
               input_original.indexOf('http://') == 0 ||
               input_original.indexOf('https://') == 0
@@ -140,7 +140,7 @@ module.exports = {
             convertArgs.splice(0, 0, '-flatten');
           }
           console.log('04', 'convert', convertArgs);
-          child_process.execFile('convert', convertArgs, error => {
+          child_process.exec('convert', convertArgs, error => {
             if (
               input_original.indexOf('http://') == 0 ||
               input_original.indexOf('https://') == 0
@@ -179,7 +179,7 @@ module.exports = {
               tempPDF,
               input
             ]);
-            child_process.execFile(
+            child_process.exec(
               'unoconv',
               ['-e', 'PageRange=' + unoconv_pagerange, '-o', tempPDF, input],
               error => {
@@ -197,7 +197,7 @@ module.exports = {
                   convertOtherArgs.splice(0, 0, '-quality', options.quality);
                 }
                 console.log('06', 'convert', convertOtherArgs);
-                child_process.execFile('convert', convertOtherArgs, error => {
+                child_process.exec('convert', convertOtherArgs, error => {
                   if (error) return callback(error);
                   fs.unlink(tempPDF, error => {
                     if (
@@ -220,7 +220,7 @@ module.exports = {
               tempPDF,
               input
             ]);
-            child_process.execFile(
+            child_process.exec(
               'unoconv',
               ['-e', 'PageRange=' + unoconv_pagerange, '-o', tempPDF, input],
               error => {
@@ -255,29 +255,25 @@ module.exports = {
                       );
                     }
                     console.log('08', 'convert', convertOtherArgs);
-                    child_process.execFile(
-                      'convert',
-                      convertOtherArgs,
-                      error => {
-                        console.log({
-                          error: error?.message.includes(
+                    child_process.exec('convert', convertOtherArgs, error => {
+                      console.log({
+                        error: error?.message.includes(
+                          'Requested FirstPage is greater than the number of pages'
+                        )
+                      });
+                      if (error) {
+                        if (
+                          error?.message.includes(
                             'Requested FirstPage is greater than the number of pages'
                           )
-                        });
-                        if (error) {
-                          if (
-                            error?.message.includes(
-                              'Requested FirstPage is greater than the number of pages'
-                            )
-                          ) {
-                            return async_callback();
-                          }
-
-                          return callback(error);
+                        ) {
+                          return async_callback();
                         }
-                        return async_callback();
+
+                        return callback(error);
                       }
-                    );
+                      return async_callback();
+                    });
                   },
                   () => {
                     fs.unlink(tempPDF, error => {
@@ -297,7 +293,7 @@ module.exports = {
                         output
                       ]);
 
-                      child_process.execFile(
+                      child_process.exec(
                         'convert',
                         [
                           '-append',
@@ -335,7 +331,7 @@ module.exports = {
 
     var fileArgs = [input_original];
     console.log('09', 'file', fileArgs);
-    var fileExecOutput = child_process.execFileSync('file', fileArgs);
+    var fileExecOutput = child_process.execSync('file', fileArgs);
     var is_executable = fileExecOutput.toString().indexOf('executable');
     if (parseInt(is_executable) > 0) {
       return callback(true);
@@ -377,7 +373,7 @@ module.exports = {
       var temp_input = path.join(os.tmpdir(), hash + url_filename);
       curlArgs = ['--silent', '-L', input, '-o', temp_input];
       console.log('10', 'curl', curlArgs);
-      child_process.execFileSync('curl', curlArgs);
+      child_process.execSync('curl', curlArgs);
       input = temp_input;
     }
 
@@ -417,7 +413,7 @@ module.exports = {
           );
         }
         console.log('11', 'ffmpeg', ffmpegArgs);
-        child_process.execFileSync('ffmpeg', ffmpegArgs);
+        child_process.execSync('ffmpeg', ffmpegArgs);
         if (
           input_original.indexOf('http://') == 0 ||
           input_original.indexOf('https://') == 0
@@ -449,7 +445,7 @@ module.exports = {
           convertArgs.splice(0, 0, '-flatten');
         }
         console.log('12', 'convert', convertArgs);
-        child_process.execFileSync('convert', convertArgs);
+        child_process.execSync('convert', convertArgs);
         if (
           input_original.indexOf('http://') == 0 ||
           input_original.indexOf('https://') == 0
@@ -489,7 +485,7 @@ module.exports = {
           tempPDF,
           input
         ]);
-        child_process.execFileSync('unoconv', [
+        child_process.execSync('unoconv', [
           '-e',
           'PageRange=' + unoconv_pagerange,
           '-o',
@@ -511,7 +507,7 @@ module.exports = {
             convertOtherArgs.splice(0, 0, '-quality', options.quality);
           }
           console.log('14', 'convert', convertOtherArgs);
-          child_process.execFileSync('convert', convertOtherArgs);
+          child_process.execSync('convert', convertOtherArgs);
         } else {
           for (var x = 0; x < pagerange_stop; x++) {
             var convertOtherArgs = [tempPDF + '[' + x + ']', x + '_' + output];
@@ -527,7 +523,7 @@ module.exports = {
               convertOtherArgs.splice(0, 0, '-quality', options.quality);
             }
             console.log('15', 'convert', convertOtherArgs);
-            child_process.execFileSync('convert', convertOtherArgs);
+            child_process.execSync('convert', convertOtherArgs);
           }
         }
 
