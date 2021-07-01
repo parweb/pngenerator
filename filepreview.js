@@ -256,58 +256,66 @@ module.exports = {
 
               var pages = [];
               var toRemove = [];
+
               for (var page = 0; page < pagerange_stop; page++) {
-                console.log('start', { page });
-
-                const extension = format(output);
-
-                var convertOtherArgs = [
-                  tempPDF + '[' + page + ']',
-                  output.replace(`.${extension}`, `_${page}.${extension}`)
-                ];
-
-                if (options.width > 0 && options.height > 0) {
-                  convertOtherArgs.splice(
-                    0,
-                    0,
-                    '-resize',
-                    options.width + 'x' + options.height
-                  );
-                }
-
-                if (options.quality) {
-                  convertOtherArgs.splice(0, 0, '-quality', options.quality);
-                }
-
-                try {
-                  console.log('08', 'convert', convertOtherArgs);
-                  await spawn('convert', convertOtherArgs, spawnOptions);
-
-                  toRemove.push(convertOtherArgs.slice(-1)[0]);
-                } catch (error) {
-                  console.log({
-                    'error?.code !== 1': error?.code !== 1,
-                    '!error?.message.includes': !error?.message.includes(
-                      'Requested FirstPage is greater than the number of pages'
-                    ),
-                    both:
-                      error?.code !== 1 &&
-                      !error?.message.includes(
-                        'Requested FirstPage is greater than the number of pages'
-                      )
-                  });
-
-                  if (
-                    error?.code !== 1 &&
-                    !error?.message.includes(
-                      'Requested FirstPage is greater than the number of pages'
-                    )
-                  ) {
-                    return callback(error);
-                  }
-                }
-                console.log('end', { page });
+                pages.push(page);
               }
+
+              await Promise.all(
+                pages.map(page => {
+                  console.log('start', { page });
+
+                  const extension = format(output);
+
+                  var convertOtherArgs = [
+                    tempPDF + '[' + page + ']',
+                    output.replace(`.${extension}`, `_${page}.${extension}`)
+                  ];
+
+                  if (options.width > 0 && options.height > 0) {
+                    convertOtherArgs.splice(
+                      0,
+                      0,
+                      '-resize',
+                      options.width + 'x' + options.height
+                    );
+                  }
+
+                  if (options.quality) {
+                    convertOtherArgs.splice(0, 0, '-quality', options.quality);
+                  }
+
+                  return spawn('convert', convertOtherArgs, spawnOptions)
+                    .then(() => {
+                      toRemove.push(convertOtherArgs.slice(-1)[0]);
+                    })
+                    .catch(error => {
+                      console.log({
+                        'error?.code !== 1': error?.code !== 1,
+                        '!error?.message.includes': !error?.message.includes(
+                          'Requested FirstPage is greater than the number of pages'
+                        ),
+                        both:
+                          error?.code !== 1 &&
+                          !error?.message.includes(
+                            'Requested FirstPage is greater than the number of pages'
+                          )
+                      });
+
+                      if (
+                        error?.code !== 1 &&
+                        !error?.message.includes(
+                          'Requested FirstPage is greater than the number of pages'
+                        )
+                      ) {
+                        return callback(error);
+                      }
+                    })
+                    .finally(() => {
+                      console.log('end', { page });
+                    });
+                })
+              );
 
               fs.unlink(tempPDF, async error => {
                 if (
