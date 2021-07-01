@@ -347,12 +347,14 @@ module.exports = {
 
                   console.log({ toRemove });
 
-                  toRemove.forEach(file_path => {
-                    console.log('toRemove', { file_path });
-                    if (fs.existsSync(file_path)) {
-                      fs.unlinkSync(file_path);
-                    }
-                  });
+                  try {
+                    toRemove.forEach(file_path => {
+                      console.log('toRemove', { file_path });
+                      if (fs.existsSync(file_path)) {
+                        fs.unlinkSync(file_path);
+                      }
+                    });
+                  } catch (_) {}
 
                   return callback();
                 } catch (error) {
