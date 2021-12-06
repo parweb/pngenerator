@@ -513,6 +513,9 @@ module.exports = {
           convertArgs.splice(0, 0, '-background', options.background);
           convertArgs.splice(0, 0, '-flatten');
         }
+
+        convertArgs.splice(0, 0, '-fill white');
+
         console.log('12', 'convert', convertArgs);
         await spawn('convert', convertArgs, spawnOptions);
         if (
