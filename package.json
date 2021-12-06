@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/parweb/pngenerator#readme",
   "dependencies": {
-    "async": "^2.6.0"
+    "async": "3.2.2"
   }
 }

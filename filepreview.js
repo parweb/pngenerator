@@ -123,6 +123,7 @@ module.exports = {
 
             return callback();
           } catch (error) {
+            console.log('01', error);
             return callback(error);
           }
         }
@@ -165,6 +166,7 @@ module.exports = {
 
             return callback();
           } catch (error) {
+            console.log('02', error);
             return callback(error);
           }
         }
@@ -234,9 +236,11 @@ module.exports = {
                   return callback();
                 });
               } catch (error) {
+                console.log('03', error);
                 return callback(error);
               }
             } catch (error) {
+              console.log('04', error);
               return callback(error);
             }
           } else {
@@ -290,6 +294,7 @@ module.exports = {
                       toRemove.push(convertOtherArgs.slice(-1)[0]);
                     })
                     .catch(error => {
+                      console.log('05', error);
                       console.log({
                         'error?.code !== 1': error?.code !== 1,
                         '!error?.message.includes': !error?.message.includes(
@@ -354,20 +359,25 @@ module.exports = {
                         fs.unlinkSync(file_path);
                       }
                     });
-                  } catch (_) {}
+                  } catch (_) {
+                    console.log('06', _);
+                  }
 
                   return callback();
                 } catch (error) {
+                  console.log('07', error);
                   return callback(error);
                 }
               });
             } catch (error) {
+              console.log('08', error);
               return callback(error);
             }
           }
         }
       }
     } catch (error) {
+      console.log('09', error);
       return callback(error);
     }
   },
@@ -440,6 +450,7 @@ module.exports = {
         return false;
       }
     } catch (e) {
+      console.log('11', e);
       return false;
     }
 
@@ -479,6 +490,7 @@ module.exports = {
         }
         return true;
       } catch (e) {
+        console.log('12', e);
         return false;
       }
     }
@@ -511,6 +523,7 @@ module.exports = {
         }
         return true;
       } catch (e) {
+        console.log('13', e);
         return false;
       }
     }
@@ -553,7 +566,7 @@ module.exports = {
 
           await proc;
         } catch (error) {
-          console.log({ error });
+          console.log('14', { error });
         }
 
         if (unoconv_pagerange == '1') {
@@ -577,7 +590,7 @@ module.exports = {
             const proc = await spawn('convert', convertOtherArgs, spawnOptions);
             console.log({ child: proc.child });
           } catch (error) {
-            console.log({ error });
+            console.log('15', { error });
           }
         } else {
           for (var x = 0; x < pagerange_stop; x++) {
@@ -608,6 +621,7 @@ module.exports = {
         }
         return true;
       } catch (e) {
+        console.log('16', e);
         return false;
       }
     }
